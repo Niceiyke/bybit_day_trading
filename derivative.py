@@ -16,7 +16,7 @@ sl = 0.99  # Stop Loss -0.9%
 timeframe = 15  # 15 minutes
 mode = 0  # 1 - Isolated, 0 - Cross
 leverage = 10
-qty = 10  # Amount of USDT for one order
+qty = 100  # Amount of USDT for one order
 
 
 # Getting balance on Bybit Derivatrives Asset (in USDT)
