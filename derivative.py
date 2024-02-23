@@ -181,6 +181,16 @@ def place_order_market(symbol, side):
             print(err)
 
 
+def calculate_macd(df):
+    close_df = df["Close"]
+    ma9 = close_df.ewm(span=12, adjust=False).mean()
+    ma26 = close_df.ewm(span=26, adjust=False).mean()
+    ema200 = close_df.ewm(span=200, adjust=False).mean()
+    macd = ma9 - ma26
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
+
+
 def get_strategy(df):
     strategy = "none"
     macd, signal, moving_average, price = calculate_macd(df)
@@ -197,16 +207,6 @@ def get_strategy(df):
 
     # Default case
     return strategy
-
-
-def calculate_macd(df):
-    close_df = df["Close"]
-    ma9 = close_df.ewm(span=12, adjust=False).mean()
-    ma26 = close_df.ewm(span=26, adjust=False).mean()
-    ema200 = close_df.ewm(span=200, adjust=False).mean()
-    macd = ma9 - ma26
-    signal = macd.ewm(span=9, adjust=False).mean()
-    return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
 
 
 def macd_signal(symbol):
