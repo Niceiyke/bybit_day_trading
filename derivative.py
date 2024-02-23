@@ -217,7 +217,7 @@ def macd_signal(symbol):
 max_pos = 5  # Max current orders
 # symbols = get_tickers()  # getting all symbols from the Bybit Derivatives
 
-symbols = ["BTCUSDT", "ETHUSDT", "UNIUSDT", "XIAUSDT", "SCUSDT", "SOLUSDT", "FRONTUSDT"]
+symbols = ["BTCUSDT", "ETHUSDT", "UNIUSDT", "XAIUSDT", "SCUSDT", "SOLUSDT", "FRONTUSDT"]
 
 # Infinite loop
 while True:
