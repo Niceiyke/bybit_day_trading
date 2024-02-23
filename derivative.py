@@ -7,6 +7,7 @@ from time import sleep
 
 
 session = HTTP(
+    testnet=False,
     api_key=api,
     api_secret=secret)
 
@@ -27,6 +28,7 @@ def get_balance():
     try:
         resp = session.get_wallet_balance(accountType="UNIFIED", coin="USDT")['result']['list'][0]['coin'][0]['walletBalance']
         resp = float(resp)
+        print(resp)
         return resp
     except Exception as err:
         print(err)
@@ -69,7 +71,7 @@ def klines(symbol):
     except Exception as err:
         print(err)
 
-
+"""
 # Getting your current positions. It returns symbols list with opened positions
 def get_positions():
     try:
@@ -242,7 +244,7 @@ while True:
                 print(signal)
                 
                 # Signal to buy or sell
-                """
+                
                 signal = rsi_signal(elem)
                 if signal == 'up':
                     print(f'Found BUY signal for {elem}')
@@ -256,6 +258,7 @@ while True:
                     sleep(2)
                     place_order_market(elem, 'sell')
                     sleep(5)
-                """
+                
     print('Waiting 2 mins')
     sleep(120)
+"""

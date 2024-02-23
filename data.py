@@ -7,7 +7,7 @@ session = HTTP(
 )
 
 try:
-    print(session.place_order(
+    session.place_order(
     category="spot",
     symbol="BTCUSDT",
     side="Buy",
@@ -18,7 +18,7 @@ try:
     orderLinkId="spot-test-postonly",
     isLeverage=0,
     orderFilter="Order",
-))
+)
     print("done")
 except Exception as err:
         print(err)
