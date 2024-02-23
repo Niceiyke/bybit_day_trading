@@ -11,8 +11,8 @@ session = HTTP(api_key=api, api_secret=secret)
 # session = HTTP(testnet=False,api_key="...",api_secret="...",)
 
 # Config:
-tp = 0.01  # Take Profit +1.2%
-sl = 0.02  # Stop Loss -0.9%
+tp = 1.03  # Take Profit +1.2%
+sl = 0.99  # Stop Loss -0.9%
 timeframe = 15  # 15 minutes
 mode = 0  # 1 - Isolated, 0 - Cross
 leverage = 10
@@ -144,8 +144,8 @@ def place_order_market(symbol, side):
     sleep(1)
     if side == "buy":
         try:
-            tp_price = round(mark_price + mark_price * tp, price_precision)
-            sl_price = round(mark_price - mark_price * sl, price_precision)
+            tp_price = round(mark_price * tp, price_precision)
+            sl_price = round(mark_price * sl, price_precision)
             resp = session.place_order(
                 category="linear",
                 symbol=symbol,
@@ -185,18 +185,13 @@ def get_strategy(df):
     strategy = "none"
     macd, signal, moving_average, price = calculate_macd(df)
 
-    # Check bullish signal
-    if macd > signal and macd > 0 and signal > 0 and price < moving_average:
+    # Check bullish signal long
+    if macd > signal and macd < 0 and signal < 0 and price < moving_average:
         strategy = "buy"
         return strategy
 
-    # Check bearish signal
-    if (
-        macd < signal
-        and macd > 0
-        and signal > 0
-        and float(moving_average) * 0.997 < price
-    ):
+    # Check bearish signal short
+    if macd < signal and macd > 0 and signal > 0 and moving_average < price:
         strategy = "sell"
         return strategy
 
@@ -213,41 +208,16 @@ def calculate_macd(df):
     signal = macd.ewm(span=9, adjust=False).mean()
     return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
 
-    strategy = "none"
-    macd, signal, moving_average, price = calculate_macd(df)
-    # Check bullish signal
-    if macd > signal and macd < 0 and signal < 0 & (price < moving_average):
-        strategy = "buy"
-        return strategy
-    if (macd < signal) & ((macd & signal) > 0) & (price > moving_average):
-        strategy = "sell"
-        return strategy
-    # Check bearish signal
-    if (
-        (macd < signal)
-        & ((macd & signal) < 0)
-        & (float(moving_average) * 0.997 < price)
-    ):
-        strategy = "buy"
-        return strategy
-    if (
-        (macd > signal)
-        & ((macd & signal) > 0)
-        & (float(price * 1.001) > moving_average)
-    ):
-
-        strategy = "sell"
-        return strategy
-    return strategy
-
 
 def macd_signal(symbol):
     data = klines(symbol)
     return get_strategy(df=data)
 
 
-max_pos = 2  # Max current orders
-symbols = get_tickers()  # getting all symbols from the Bybit Derivatives
+max_pos = 5  # Max current orders
+# symbols = get_tickers()  # getting all symbols from the Bybit Derivatives
+
+symbols = ["BTCUSDT", "ETHUSDT", "UNIUSDT", "XIAUSDT", "SCUSDT", "SOLUSDT", "FRONTUSDT"]
 
 # Infinite loop
 while True:
@@ -289,4 +259,4 @@ while True:
                 sleep(5)
 
     print("Waiting 20 seconds")
-    sleep(20)
+    sleep(10)
