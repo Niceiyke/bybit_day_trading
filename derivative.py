@@ -249,6 +249,8 @@ while True:
             # Signal to buy
 
             signal = macd_signal(symbol)
+            if symbol in pos and signal == "buy":
+                break
             if signal == "buy":
                 if len(pos) >= max_pos:
                     break
