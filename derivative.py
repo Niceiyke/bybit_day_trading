@@ -15,8 +15,8 @@ tp = 1.03  # Take Profit +1.2%
 sl = 0.99  # Stop Loss -0.9%
 timeframe = 15  # 15 minutes
 mode = 0  # 1 - Isolated, 0 - Cross
-leverage = 10
-qty = 100  # Amount of USDT for one order
+leverage = 20
+qty = 200  # Amount of USDT for one order
 
 
 # Getting balance on Bybit Derivatrives Asset (in USDT)
@@ -217,7 +217,17 @@ def macd_signal(symbol):
 max_pos = 5  # Max current orders
 # symbols = get_tickers()  # getting all symbols from the Bybit Derivatives
 
-symbols = ["BTCUSDT", "ETHUSDT", "UNIUSDT", "XAIUSDT", "SCUSDT", "SOLUSDT", "FRONTUSDT"]
+symbols = [
+    "BTCUSDT",
+    "ETHUSDT",
+    "UNIUSDT",
+    "XAIUSDT",
+    "SCUSDT",
+    "FLRUSDT",
+    "FRONTUSDT",
+    "COTIUSDT",
+    "AMBUSDT",
+]
 
 # Infinite loop
 while True:
