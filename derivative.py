@@ -7,7 +7,6 @@ from time import sleep
 
 
 session = HTTP(
-    testnet=False,
     api_key=api,
     api_secret=secret)
 
@@ -15,12 +14,13 @@ session = HTTP(
 #session = HTTP(testnet=False,api_key="...",api_secret="...",)
 
 # Config:
-tp = 0.012  # Take Profit +1.2%
-sl = 0.009  # Stop Loss -0.9%
+tp = 0.01  # Take Profit +1.2%
+sl = 0.02  # Stop Loss -0.9%
 timeframe = 15  # 15 minutes
-mode = 1  # 1 - Isolated, 0 - Cross
+mode = 0  # 1 - Isolated, 0 - Cross
 leverage = 10
 qty = 10   # Amount of USDT for one order
+
 
 
 # Getting balance on Bybit Derivatrives Asset (in USDT)
@@ -45,7 +45,10 @@ def get_tickers():
         symbols = []
         for elem in resp:
             if 'USDT' in elem['symbol'] and not 'USDC' in elem['symbol']:
-                symbols.append(elem['symbol'])
+                if float(elem['turnover24h'])>100000000:
+                  symbols.append(elem['symbol'])
+        
+        print(f'you have total of {len(symbols)} crypto to trade')
         return symbols
     except Exception as err:
         print(err)
@@ -59,19 +62,18 @@ def klines(symbol):
             category='linear',
             symbol=symbol,
             interval=timeframe,
-            limit=500
+            limit=750
         )['result']['list']
         resp = pd.DataFrame(resp)
         resp.columns = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Turnover']
         resp = resp.set_index('Time')
         resp = resp.astype(float)
         resp = resp[::-1]
-        print(resp)
         return resp
     except Exception as err:
         print(err)
 
-"""
+
 # Getting your current positions. It returns symbols list with opened positions
 def get_positions():
     try:
@@ -148,7 +150,7 @@ def place_order_market(symbol, side):
     mark_price = float(mark_price)
     print(f'Placing {side} order for {symbol}. Mark price: {mark_price}')
     order_qty = round(qty/mark_price, qty_precision)
-    sleep(2)
+    sleep(1)
     if side == 'buy':
         try:
             tp_price = round(mark_price + mark_price * tp, price_precision)
@@ -182,43 +184,69 @@ def place_order_market(symbol, side):
                 stopLoss=sl_price,
                 tpTriggerBy='Market',
                 slTriggerBy='Market'
+                
             )
             print(resp)
         except Exception as err:
             print(err)
 
 
-# Some RSI strategy. Make your own using this example
-def rsi_signal(symbol):
-    kl = klines(symbol)
-    ema = ta.trend.ema_indicator(kl.Close, window=200)
-    rsi = ta.momentum.RSIIndicator(kl.Close).rsi()
-    if rsi.iloc[-3] < 30 and rsi.iloc[-2] < 30 and rsi.iloc[-1] > 30:
-        return 'up'
-    if rsi.iloc[-3] > 70 and rsi.iloc[-2] > 70 and rsi.iloc[-1] < 70:
-        return 'down'
-    else:
-        return 'none'
 
-# William %R signal
-def williamsR(symbol):
-    kl = klines(symbol)
-    w = ta.momentum.WilliamsRIndicator(kl.High, kl.Low, kl.Close, lbp=24).williams_r()
-    ema_w = ta.trend.ema_indicator(w, window=24)
-    if w.iloc[-1] < -99.5:
-        return 'up'
-    elif w.iloc[-1] > -0.5:
-        return 'down'
-    elif w.iloc[-1] < -75 and w.iloc[-2] < -75 and w.iloc[-2] < ema_w.iloc[-2] and w.iloc[-1] > ema_w.iloc[-1]:
-        return 'up'
-    elif w.iloc[-1] > -25 and w.iloc[-2] > -25 and w.iloc[-2] > ema_w.iloc[-2] and w.iloc[-1] < ema_w.iloc[-1]:
-        return 'down'
-    else:
-        return 'none'
+def get_strategy(df):
+    strategy = 'none'
+    macd, signal, moving_average, price = calculate_macd(df)
+    
+    # Check bullish signal
+    if macd > signal and macd > 0 and signal > 0 and price < moving_average:
+        strategy = 'buy'
+        return strategy
+    
+    # Check bearish signal
+    if macd < signal and macd > 0 and signal > 0 and float(moving_average) * 0.997 < price:
+        strategy = 'sell'
+        return strategy
+    
+    # Default case
+    return strategy
 
 
+def calculate_macd(df):
+    close_df = df['Close']
+    ma9 = close_df.ewm(span=12, adjust=False).mean()
+    ma26 = close_df.ewm(span=26, adjust=False).mean()
+    ema200 = close_df.ewm(span=200, adjust=False).mean()
+    macd = ma9 - ma26
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
 
-max_pos = 50    # Max current orders
+
+
+    strategy ='none'
+    macd,signal,moving_average,price = calculate_macd(df)
+    #Check bullish signal
+    if macd > signal and  macd <0 and  signal <0  &(price<moving_average):
+        strategy ='buy'
+        return strategy   
+    if (macd < signal) & ((macd & signal)>0) &(price>moving_average):
+        strategy ='sell'
+        return strategy
+     #Check bearish signal
+    if (macd < signal) & ((macd & signal)<0) &(float(moving_average)*0.997 < price):
+       strategy ='buy'
+       return  strategy      
+    if (macd > signal) & ((macd & signal)>0) &(float(price*1.001)>moving_average):
+
+       strategy ='sell'
+       return  strategy  
+    return strategy
+
+def macd_signal(symbol):
+    data = klines(symbol)
+    return get_strategy(df=data)
+
+  
+
+max_pos = 2    # Max current orders
 symbols = get_tickers()     # getting all symbols from the Bybit Derivatives
 
 # Infinite loop
@@ -232,33 +260,36 @@ while True:
         pos = get_positions()
         print(f'You have {len(pos)} positions: {pos}')
 
-        if len(pos) < max_pos:
-            # Checking every symbol from the symbols list:
-            for elem in symbols:
-                pos = get_positions()
-                if len(pos) >= max_pos:
-                    break
 
-                print(elem)
-                signal = rsi_signal(elem)
+        for symbol in symbols:
+                pos = get_positions()
+                print(symbol)
+                signal = macd_signal(symbol)
                 print(signal)
+
                 
-                # Signal to buy or sell
+                # Signal to sell
+
+                if symbol in pos and signal =='sell':
+                    if signal == 'sell':
+                        print(f'Found SELL signal for {symbol}')
+                        set_mode(symbol)
+                        sleep(2)
+                        place_order_market(symbol, 'sell')
+                        sleep(5)
                 
-                signal = rsi_signal(elem)
-                if signal == 'up':
-                    print(f'Found BUY signal for {elem}')
-                    set_mode(elem)
+                
+                # Signal to buy 
+                
+                signal = macd_signal(symbol)
+                if signal == 'buy':
+                    if len(pos) >= max_pos:
+                        break
+                    print(f'Found BUY signal for {symbol}')
+                    set_mode(symbol)
                     sleep(2)
-                    place_order_market(elem, 'buy')
-                    sleep(5)
-                if signal == 'down':
-                    print(f'Found SELL signal for {elem}')
-                    set_mode(elem)
-                    sleep(2)
-                    place_order_market(elem, 'sell')
+                    place_order_market(symbol, 'buy')
                     sleep(5)
                 
-    print('Waiting 2 mins')
-    sleep(120)
-"""
+    print('Waiting 20 seconds')
+    sleep(20)

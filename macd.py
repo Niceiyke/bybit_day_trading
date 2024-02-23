@@ -12,6 +12,8 @@ QUANTITY = 10  # Amount of USDT for one order
 TAKE_PROFIT = 1.3  # Take Profit +1.2%
 STOP_LOSS = 0.1  # Stop Loss -0.9%
 LEVERAGE = 10
+PRICE =50
+MODE =0
 
 session = HTTP(api_key=API_KEY, api_secret=API_SECRET)
 
@@ -43,61 +45,60 @@ def calculate_macd(df):
     return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
 
 
-def buy_strategy():
-    print("Buy")
-
-
-def sell_strategy():
-    print("Sell")
-
+def enter_position(order_type):
+    session.place_order(
+    category="linear",
+    symbol=SYMBOL,
+    side=order_type,
+    orderType="Limit",
+    qty=QUANTITY,
+    price=PRICE,
+    timeInForce="PostOnly",
+    orderLinkId="spot-test-postonly",
+    isLeverage=LEVERAGE,
+    orderFilter="Order",
+)
 
 def active_trade():
-    return 1  # Placeholder for active trade logic
+    return 1
+
+def get_strategy():
+    data =get_klines()
+    macd,signal,moving_average,price = calculate_macd(data)
+
+    active_position=active_trade()
+
+    #Check bullish signal
+
+    if (macd > signal) & ((macd & signal)<0) &(price<moving_average):
+
+        if active_position == 0:
+            enter_position(order_type='buy')
+
+        
+    if (macd < signal) & ((macd & signal)>0) &(price>moving_average):
+
+        if active_position == 1:
+            enter_position(order_type='sell')
 
 
-def main():
-    df = get_klines()
-    if df is None:
-        return
+     #Check bearish signal
+    if (macd < signal) & ((macd & signal)<0) &(price*1.001 < moving_average):
 
-    macd, signal, ema200, close_price = calculate_macd(df)
-    diff = macd - signal
-    active_trade_status = active_trade()
+        if active_position == 0:
+            enter_position(order_type='buy')
 
-    print('Close Price:', close_price)
-    print('EMA200:', ema200)
-    print("MACD:", macd)
-    print("Signal:", signal)
-    print('Difference:', diff)
+        
+    if (macd > signal) & ((macd & signal)>0) &(price*1.001>moving_average):
 
-    action = 0
+        if active_position == 1:
+             enter_position(order_type='sell')
 
-    if active_trade_status == 0:
-        if close_price < ema200:
-            print("Buy Condition 1")
-            if macd < 0:
-                print("Buy Condition 2")
-                if 3 < diff < 15:
-                    print("Buy Condition 3")
-                    action = 1
-                    buy_strategy()
-        else:
-            print("No Buy Condition Met")
 
-    elif active_trade_status == 1:
-        if close_price > ema200:
-            print("Sell Condition 1")
-            if macd > 0:
-                print("Sell Condition 2")
-                if -15 < diff < 0:
-                    print("Sell Condition 3")
-                    action = 2
-                    sell_strategy()
-    else:
-        print("No Active Trade")
 
-    # Perform action based on trade conditions
-    # execute_trade(action)
+
+
+
 
 
 while True:

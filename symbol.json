@@ -1,0 +1,24 @@
+{'symbol': 'ETHUSDT', 'lastPrice': '2927.17', 'indexPrice': '2926.93',
+ 'markPrice': '2927.16', 'prevPrice24h': '2980.95', 'price24hPcnt': '-0.018041', 
+ 'highPrice24h': '3043.00', 'lowPrice24h': '2912.44', 'prevPrice1h': '2943.03', 
+ 'openInterest': '529365.09', 
+ 'openInterestValue': '1549536316.84', 'turnover24h': '2766206162.9678', 
+ 'volume24h': '932378.5300', 'fundingRate': '0.0001', 
+ 'nextFundingTime': '1708704000000', 'predictedDeliveryPrice': '', 
+ 'basisRate': '', 'deliveryFeeRate': '', 'deliveryTime': '0',
+  'ask1Size': '0.10', 'bid1Price': '2927.17', 'ask1Price': '2927.18',
+   'bid1Size': '1.52', 'basis': ''}
+
+
+   {'symbol': 'FETUSDT', 'lastPrice': '1.11555', 'indexPrice': '1.11497', 
+   'markPrice': '1.11541', 'prevPrice24h': '1.20000',
+    'price24hPcnt': '-0.070375',
+    'highPrice24h': '1.23990',
+    'lowPrice24h': '1.07060', 'prevPrice1h': '1.19960', 'openInterest': '22587011', 
+    'openInterestValue': '25193777.94',
+     'turnover24h': '135,296,817.8768', 
+     'volume24h': '118152756.0000',
+      'fundingRate': '0.00014594', 'nextFundingTime': '1708704000000',
+       'predictedDeliveryPrice': '', 'basisRate': '', 'deliveryFeeRate': '', 
+   'deliveryTime': '0', 'ask1Size': '95', 'bid1Price': '1.11555', 'ask1Price':
+    '1.11585', 'bid1Size': '230', 'basis': ''}
