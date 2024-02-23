@@ -154,8 +154,8 @@ def place_order_market(symbol, side):
                 qty=order_qty,
                 takeProfit=tp_price,
                 stopLoss=sl_price,
-                tpTriggerBy="Market",
-                slTriggerBy="Market",
+                tpTriggerBy="MarkPrice",
+                slTriggerBy="MarkPrice",
             )
             print(resp)
         except Exception as err:
