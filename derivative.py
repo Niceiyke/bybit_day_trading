@@ -11,9 +11,14 @@ session = HTTP(api_key=api, api_secret=secret)
 # session = HTTP(testnet=False,api_key="...",api_secret="...",)
 
 # Config:
-tp = 1.03  # Take Profit +1.2%
-sl = 0.99  # Stop Loss -0.9%
-timeframe = 15  # 15 minutes
+tpl = 1.03  # Take Profit long +1.2%
+sll = 0.99  # Stop Loss  long -0.9%
+
+tps = 0.97  # Take Profit long +1.2%
+sls = 1.01  # Stop Loss  long -0.9%
+
+
+timeframe = 1  # 15 minutes
 mode = 0  # 1 - Isolated, 0 - Cross
 leverage = 20
 qty = 200  # Amount of USDT for one order
@@ -144,8 +149,8 @@ def place_order_market(symbol, side):
     sleep(1)
     if side == "buy":
         try:
-            tp_price = round(mark_price * tp, price_precision)
-            sl_price = round(mark_price * sl, price_precision)
+            tp_price = round(mark_price * tpl, price_precision)
+            sl_price = round(mark_price * sll, price_precision)
             resp = session.place_order(
                 category="linear",
                 symbol=symbol,
@@ -163,8 +168,8 @@ def place_order_market(symbol, side):
 
     if side == "sell":
         try:
-            tp_price = round(mark_price - mark_price * tp, price_precision)
-            sl_price = round(mark_price + mark_price * sl, price_precision)
+            tp_price = round(mark_price * tps, price_precision)
+            sl_price = round(mark_price * sls, price_precision)
             resp = session.place_order(
                 category="linear",
                 symbol=symbol,
@@ -173,8 +178,8 @@ def place_order_market(symbol, side):
                 qty=order_qty,
                 takeProfit=tp_price,
                 stopLoss=sl_price,
-                tpTriggerBy="Market",
-                slTriggerBy="Market",
+                tpTriggerBy="Markprice",
+                slTriggerBy="MarkPrice",
             )
             print(resp)
         except Exception as err:
@@ -214,61 +219,59 @@ def macd_signal(symbol):
     return get_strategy(df=data)
 
 
-max_pos = 5  # Max current orders
+max_pos = 2  # Max current orders
 # symbols = get_tickers()  # getting all symbols from the Bybit Derivatives
 
 symbols = [
     "BTCUSDT",
     "ETHUSDT",
     "UNIUSDT",
-    "XAIUSDT",
     "SCUSDT",
     "FLRUSDT",
     "FRONTUSDT",
-    "COTIUSDT",
-    "AMBUSDT",
+    "DYDXUSDT",
 ]
 
 # Infinite loop
-while True:
-    balance = get_balance()
-    if balance == None:
-        print("Cant connect to API")
-    if balance != None:
-        balance = float(balance)
-        print(f"Balance: {balance}")
-        pos = get_positions()
-        print(f"You have {len(pos)} positions: {pos}")
-
-        for symbol in symbols:
+try:
+    while True:
+        balance = get_balance()
+        if balance == None:
+            print("Cant connect to API")
+        if balance != None:
+            balance = float(balance)
+            print(f"Balance: {balance}")
             pos = get_positions()
-            print(symbol)
-            signal = macd_signal(symbol)
-            print(signal)
+            print(f"You have {len(pos)} positions: {pos}")
 
-            # Signal to sell
+            for symbol in symbols:
+                pos = get_positions()
+                print(symbol)
+                signal = macd_signal(symbol)
+                print(signal)
 
-            if symbol in pos and signal == "sell":
+                # Signal to sell
+
                 if signal == "sell":
-                    print(f"Found SELL signal for {symbol}")
+                    print(f"Found Short signal for {symbol}")
                     set_mode(symbol)
                     sleep(2)
                     place_order_market(symbol, "sell")
                     sleep(5)
 
-            # Signal to buy
+                # Signal to buy
 
-            signal = macd_signal(symbol)
-            if symbol in pos and signal == "buy":
-                break
-            if signal == "buy":
-                if len(pos) >= max_pos:
-                    break
-                print(f"Found BUY signal for {symbol}")
-                set_mode(symbol)
-                sleep(2)
-                place_order_market(symbol, "buy")
-                sleep(5)
+                if signal == "buy":
+                    if len(pos) >= max_pos:
+                        break
+                    print(f"Found long signal for {symbol}")
+                    set_mode(symbol)
+                    sleep(2)
+                    place_order_market(symbol, "buy")
+                    sleep(5)
 
-    print("Waiting 20 seconds")
-    sleep(10)
+        print("Waiting 20 seconds")
+        sleep(10)
+
+except KeyboardInterrupt:
+    print("Someone closed the program")
