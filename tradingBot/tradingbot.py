@@ -17,7 +17,7 @@ class TradingBot:
     TAKE_PROFIT_MULTIPLIER = 3
     STOP_LOSS_MULTIPLIER = 2
     MARKET_SLEEP_TIME = 2
-    MIN_SYMBOL_TURNOVER = 200000000
+    MIN_SYMBOL_TURNOVER = 50000000
 
     def get_symbols(self):
         try:
