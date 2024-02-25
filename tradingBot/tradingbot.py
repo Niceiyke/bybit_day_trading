@@ -103,6 +103,7 @@ class TradingBot:
             if not symbols:
                 print("No symbols available for trading.")
                 return
+            print(symbols)
 
             for symbol in symbols:
                 df = self.get_klines(symbol=symbol)

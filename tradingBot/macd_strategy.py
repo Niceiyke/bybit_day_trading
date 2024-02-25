@@ -1,5 +1,4 @@
 def calculate_macd(df):
-    print(df)
     close_df = df["Close"]
     ma9 = close_df.ewm(span=12, adjust=False).mean()
     ma26 = close_df.ewm(span=26, adjust=False).mean()
