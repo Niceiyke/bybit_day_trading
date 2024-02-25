@@ -48,7 +48,7 @@ def get_tickers():
         symbols = []
         for elem in resp:
             if "USDT" in elem["symbol"] and not "USDC" in elem["symbol"]:
-                if float(elem["turnover24h"]) > 100000000:
+                if float(elem["turnover24h"]) > 200000000:
                     symbols.append(elem["symbol"])
 
         print(f"you have total of {len(symbols)} crypto to trade")
