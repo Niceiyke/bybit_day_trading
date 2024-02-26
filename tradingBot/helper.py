@@ -59,3 +59,16 @@ def get_precisions(client, symbol):
         return price, qty
     except Exception as err:
         print(err)
+
+# pct_diff   
+def get_price_difference(side,current_price, moving_average_price):
+
+    if side =='buy':
+        price_diff =(moving_average_price-current_price)/current_price
+        return round(price_diff*100,2)
+    
+    else:
+        price_diff =(current_price-moving_average_price)/moving_average_price
+        return round(price_diff*100,2)
+
+

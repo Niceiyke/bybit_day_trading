@@ -1,3 +1,5 @@
+from helper import get_price_difference
+
 def calculate_macd(df):
     close_df = df["Close"]
     ma9 = close_df.ewm(span=12, adjust=False).mean()
@@ -13,14 +15,23 @@ def get_strategy(df):
     macd, signal, moving_average, price = calculate_macd(df)
 
     # Check bullish signal long
-    if macd > signal and macd < 0 and signal < 0 and price < moving_average:
+    if macd>signal and macd < 0 and signal < 0 and  moving_average > price :
 
-        # pct_diff=
+        pct_diff= get_price_difference(side='buy',current_price=price,moving_average_price=moving_average)
+
+        if pct_diff > 5:
+            return    
         strategy = "buy"
         return strategy
 
     # Check bearish signal short
-    if macd < signal and macd > 0 and signal > 0 and moving_average < price:
+    if signal>macd and macd > 0 and signal > 0 and moving_average < price:
+
+        pct_diff= get_price_difference(side='sell',current_price=price,moving_average_price=moving_average)
+
+        if pct_diff < 5:
+            return  
+        
         strategy = "sell"
         return strategy
 

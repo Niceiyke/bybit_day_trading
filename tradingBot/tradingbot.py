@@ -11,13 +11,14 @@ class TradingBot:
         api_key=os.environ.get("API_KEY"), api_secret=os.environ.get("API_SECRET")
     )
     LEVERAGE = 15
-    TIMEFRAME = 15
-    CANDLESIZE = 100
+    TIMEFRAME = 5
+    CANDLESIZE = 750
     AMOUNT = 20
     TAKE_PROFIT_MULTIPLIER = 3
     STOP_LOSS_MULTIPLIER = 2
     MARKET_SLEEP_TIME = 2
     MIN_SYMBOL_TURNOVER = 50000000
+    MIN_SYMBOL_24H_PCNT=0
 
     def get_symbols(self):
         try:
@@ -28,6 +29,7 @@ class TradingBot:
                 if "USDT" in elem["symbol"]
                 and "USDC" not in elem["symbol"]
                 and float(elem["turnover24h"]) > self.MIN_SYMBOL_TURNOVER
+                and float(elem['price24hPcnt'])>self.MIN_SYMBOL_24H_PCNT
             ]
             print(f"You have total of {len(symbols)} crypto to trade")
             return symbols
@@ -116,20 +118,22 @@ class TradingBot:
                     print(f"No strategy found for {symbol}.")
                     continue
                 elif strategy == "buy":
-                    self.place_dummy_order(side="buy")
+                    self.place_dummy_order(side="buy",symbol=symbol)
                 else:
-                    self.place_dummy_order(side="sell")
+                    self.place_dummy_order(side="sell",symbol=symbol)
         except Exception as err:
             print("Error in signal processing:", err)
 
-    def place_dummy_order(self, side):
+    def place_dummy_order(self, side,symbol):
         if side == "buy":
-            print("long order placed")
+            print(f"long order placed {symbol}")
 
         else:
-            print("short order placed")
+            print(f"short order placed {symbol}")
 
 
 if __name__ == "__main__":
     obj = TradingBot()
-    obj.get_signal()
+    while True:
+
+        obj.get_signal()
