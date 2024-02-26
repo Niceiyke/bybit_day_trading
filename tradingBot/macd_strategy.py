@@ -14,6 +14,8 @@ def get_strategy(df):
 
     # Check bullish signal long
     if macd > signal and macd < 0 and signal < 0 and price < moving_average:
+
+        # pct_diff=
         strategy = "buy"
         return strategy
 
