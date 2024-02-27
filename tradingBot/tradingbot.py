@@ -11,7 +11,7 @@ class TradingBot:
         api_key=os.environ.get("API_KEY"), api_secret=os.environ.get("API_SECRET")
     )
     LEVERAGE = 15
-    TIMEFRAME = 5
+    TIMEFRAME = 1
     CANDLESIZE = 750
     AMOUNT = 20
     TAKE_PROFIT_MULTIPLIER = 3
@@ -56,6 +56,7 @@ class TradingBot:
     def place_order_market(self, symbol, side):
         try:
             price_precision, quantity_precision = get_precisions(symbol)
+            sleep(self.MARKET_SLEEP_TIME)
 
             mark_price = float(
                 self.client.get_tickers(category="linear", symbol=symbol)["result"][
