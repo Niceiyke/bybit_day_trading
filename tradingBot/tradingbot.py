@@ -2,23 +2,28 @@ import os
 from pybit.unified_trading import HTTP
 import pandas as pd
 from macd_strategy import get_strategy
-from helper import set_mode, get_pnl, get_positions, get_precisions
+from helper import set_mode, get_pnl, get_positions, get_precisions,get_tp_spl
+from strategy import three_moving_average_rsi_strategy
 from time import sleep
 
 
 class TradingBot:
     client = HTTP(
-        api_key=os.environ.get("API_KEY"), api_secret=os.environ.get("API_SECRET")
-    )
-    LEVERAGE = 15
-    TIMEFRAME = 1
+    testnet=True,
+    api_key="vHnoV1kQTgYsmhaY2s",
+    api_secret="C5lVp013avzhEZgojyYxiT4TzwnZOX70gu8n",
+)
+    LEVERAGE = 10
+    TIMEFRAME = 15
     CANDLESIZE = 750
-    AMOUNT = 20
+    AMOUNT = 100
+    EXPECTED_PROFIT =50
     TAKE_PROFIT_MULTIPLIER = 3
     STOP_LOSS_MULTIPLIER = 2
     MARKET_SLEEP_TIME = 2
-    MIN_SYMBOL_TURNOVER = 50000000
+    MIN_SYMBOL_TURNOVER = 5000000
     MIN_SYMBOL_24H_PCNT=0
+    MAX_OPEN_POSITION =10
 
     def get_symbols(self):
         try:
@@ -53,9 +58,19 @@ class TradingBot:
         except Exception as err:
             print(f"Error fetching klines for {symbol}:", err)
 
-    def place_order_market(self, symbol, side):
+    def place_order_market(self, symbol, side,):
         try:
-            price_precision, quantity_precision = get_precisions(symbol)
+            open_position =get_positions(client=self.client)
+
+
+            if len(open_position)==5:
+                return
+            
+            if symbol in open_position:
+                return
+            
+            print("open position are",open_position)
+            price_precision, quantity_precision = get_precisions(client=self.client,symbol=symbol)
             sleep(self.MARKET_SLEEP_TIME)
 
             mark_price = float(
@@ -71,19 +86,9 @@ class TradingBot:
 
             sleep(self.MARKET_SLEEP_TIME)
 
-            tp_multiplier = (
-                self.TAKE_PROFIT_MULTIPLIER
-                if side == "buy"
-                else -self.TAKE_PROFIT_MULTIPLIER
-            )
-            sl_multiplier = (
-                -self.STOP_LOSS_MULTIPLIER
-                if side == "buy"
-                else self.STOP_LOSS_MULTIPLIER
-            )
+            tp,sl=get_tp_spl(expected_profit=self.EXPECTED_PROFIT ,amount=amount,price=mark_price,side=side,precision=price_precision)
 
-            tp_price = round(mark_price * tp_multiplier, price_precision)
-            sl_price = round(mark_price * sl_multiplier, price_precision)
+
 
             resp = self.client.place_order(
                 category="linear",
@@ -91,8 +96,8 @@ class TradingBot:
                 side=side.capitalize(),  # Ensure capitalization
                 orderType="Market",
                 qty=order_quantity,
-                takeProfit=tp_price,
-                stopLoss=sl_price,
+                takeProfit=tp,
+                stopLoss=sl,
                 tpTriggerBy="MarkPrice",
                 slTriggerBy="MarkPrice",
             )
@@ -114,14 +119,15 @@ class TradingBot:
                     print(f"No dataframe available for {symbol}.")
                     continue
 
-                strategy = get_strategy(df=df)
-                if strategy == "none":
+                #strategy = get_strategy(df=df)
+                strategy = three_moving_average_rsi_strategy(df=df)
+                if strategy == "hold":
                     print(f"No strategy found for {symbol}.")
                     continue
                 elif strategy == "buy":
-                    self.place_dummy_order(side="buy",symbol=symbol)
+                    self.place_order_market(side='buy',symbol=symbol)
                 else:
-                    self.place_dummy_order(side="sell",symbol=symbol)
+                    self.place_order_market(side='sell',symbol=symbol)
         except Exception as err:
             print("Error in signal processing:", err)
 
@@ -138,3 +144,4 @@ if __name__ == "__main__":
     while True:
 
         obj.get_signal()
+        sleep(300)

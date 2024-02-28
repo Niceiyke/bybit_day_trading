@@ -71,4 +71,21 @@ def get_price_difference(side,current_price, moving_average_price):
         price_diff =(current_price-moving_average_price)/moving_average_price
         return round(price_diff*100,2)
 
+def get_tp_spl(expected_profit,amount,price,side,precision):
+   
+    expected_loss =expected_profit/3
 
+    perct_increae= (expected_profit/amount)
+    perct_decreae= (expected_loss/amount)
+
+    ltp =round(price*(1+perct_increae),precision)
+    lsl =round(price*(1-perct_decreae),precision)
+
+    stp =round(price*(1-perct_increae),precision)
+    ssl =round(price*(1+perct_decreae),precision)
+
+    if side =='buy':
+      return (ltp,lsl)
+    
+    else:
+       return(stp,ssl)
