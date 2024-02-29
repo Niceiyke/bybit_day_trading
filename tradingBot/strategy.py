@@ -1,4 +1,6 @@
 from ta import momentum
+from ta import trend
+import pandas as pd
 
 def calculate_ema(df):
     close_df = df["Close"]
@@ -28,3 +30,79 @@ def three_moving_average_rsi_strategy(df):
 
 
 
+# Function to generate trading signals based on refined strategy
+def trend_strategy(df5,df15):
+    strategy ='hold'
+    df5=df5['Close']
+    df15=df15['Close']
+    # Calculate EMAs for both timeframes
+    ema9_5min = df5.ewm(span=9).mean()
+    ema50_5min = df5.ewm(span=50).mean()
+    ema100_5min = df5.ewm(span=100).mean()
+    ema200_5min = df5.ewm(span=200).mean()
+
+    ema9_15min = df15.ewm(span=9).mean()
+    ema50_15min = df15.ewm(span=50).mean()
+    ema100_15min = df15.ewm(span=100).mean()
+    ema200_15min = df15.ewm(span=200).mean()
+
+ 
+    # Calculate MACD for confirmation
+    macd_5min = trend.MACD(close=df5).macd()
+    macd_15min = trend.MACD(close=df15).macd()
+    
+    # Calculate RSI for confirmation
+    rsi_5min = momentum.RSIIndicator(df5).rsi()
+    rsi_15min = momentum.RSIIndicator(df15).rsi()
+
+
+     # Long Entry (Buy Signal) with confirmation
+    
+
+    if (ema9_5min.iloc[-2] < ema50_5min.iloc[-2]) and (ema9_5min.iloc[-1] > ema50_5min.iloc[-1]):
+        strategy ='buy'
+        return strategy
+    
+    if (ema9_5min.iloc[-2] > ema50_5min.iloc[-2]) and (ema9_5min.iloc[-1] < ema50_5min.iloc[-1]):
+            strategy ='sell'
+            return strategy
+    
+    else:
+         return 'hold'
+
+        
+   
+        
+    
+    
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    signals = pd.DataFrame(index=df.index)
+    signals['Price'] = df
+    signals['Signal'] ='hold'
+    
+    # Long Entry (Buy Signal) with confirmation
+    signals['Signal'][(ema9_15min.shift(1) < ema50_15min.shift(1)) & (ema9_15min > ema50_15min) & 
+                      (ema50_30min.shift(1) < ema100_30min.shift(1)) & (ema50_30min > ema100_30min) &
+                      (macd > 0) & (rsi > 30)] = 'buy'
+    
+    # Short Entry (Sell Signal) with confirmation
+    signals['Signal'][(ema9_15min.shift(1) > ema50_15min.shift(1)) & (ema9_15min < ema50_15min) & 
+                      (ema50_30min.shift(1) > ema100_30min.shift(1)) & (ema50_30min < ema100_30min) &
+                      (macd < 0) & (rsi < 70)] = 'sell'
+    

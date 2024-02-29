@@ -3,7 +3,7 @@ from pybit.unified_trading import HTTP
 import pandas as pd
 from macd_strategy import get_strategy
 from helper import set_mode, get_pnl, get_positions, get_precisions,get_tp_spl
-from strategy import three_moving_average_rsi_strategy
+from strategy import three_moving_average_rsi_strategy,trend_strategy
 from time import sleep
 
 
@@ -13,11 +13,12 @@ class TradingBot:
     api_key="vHnoV1kQTgYsmhaY2s",
     api_secret="C5lVp013avzhEZgojyYxiT4TzwnZOX70gu8n",
 )
-    LEVERAGE = 10
+    LEVERAGE = 15
+    MODE= 0  # 1 - Isolated, 0 - Cross
     TIMEFRAME = 15
     CANDLESIZE = 750
     AMOUNT = 100
-    EXPECTED_PROFIT =50
+    EXPECTED_PROFIT =20
     TAKE_PROFIT_MULTIPLIER = 3
     STOP_LOSS_MULTIPLIER = 2
     MARKET_SLEEP_TIME = 2
@@ -41,12 +42,12 @@ class TradingBot:
         except Exception as err:
             print("Error fetching symbols:", err)
 
-    def get_klines(self, symbol):
+    def get_klines(self, symbol,timeframe):
         try:
             resp = self.client.get_kline(
                 category="linear",
                 symbol=symbol,
-                interval=self.TIMEFRAME,
+                interval=timeframe,
                 limit=self.CANDLESIZE,
             )["result"]["list"]
             df = pd.DataFrame(resp)
@@ -114,19 +115,27 @@ class TradingBot:
             print(symbols)
 
             for symbol in symbols:
-                df = self.get_klines(symbol=symbol)
-                if df is None:
+                df_5min = self.get_klines(symbol=symbol,timeframe=5)
+                if df_5min is None:
+                    print(f"No dataframe available for {symbol}.")
+                    continue
+                df_15min = self.get_klines(symbol=symbol,timeframe=15)
+                if df_5min is None:
                     print(f"No dataframe available for {symbol}.")
                     continue
 
                 #strategy = get_strategy(df=df)
-                strategy = three_moving_average_rsi_strategy(df=df)
+                #strategy = three_moving_average_rsi_strategy(df=df)
+                strategy =trend_strategy(df5=df_5min,df15=df_15min)
+                
                 if strategy == "hold":
                     print(f"No strategy found for {symbol}.")
                     continue
                 elif strategy == "buy":
+                    set_mode(client=self.client,symbol=symbol,leverage=self.LEVERAGE,mode=self.MODE)
                     self.place_order_market(side='buy',symbol=symbol)
                 else:
+                    set_mode(client=self.client,symbol=symbol,leverage=self.LEVERAGE,mode=self.MODE)
                     self.place_order_market(side='sell',symbol=symbol)
         except Exception as err:
             print("Error in signal processing:", err)
@@ -144,4 +153,4 @@ if __name__ == "__main__":
     while True:
 
         obj.get_signal()
-        sleep(300)
+        sleep(5)
