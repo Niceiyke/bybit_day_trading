@@ -62,14 +62,18 @@ def trend_strategy(df5, df15):
 
     # Long Entry (Buy Signal) with confirmation
 
-    if (ema9_5min.iloc[-2] < ema50_5min.iloc[-2]) and (
-        ema9_5min.iloc[-1] > ema50_5min.iloc[-1]
+    if (
+        (ema9_5min.iloc[-2] < ema50_5min.iloc[-2])
+        and (ema9_5min.iloc[-1] > ema50_5min.iloc[-1])
+        and rsi_5min < 50
     ):
         strategy = "buy"
         return strategy
 
-    if (ema9_5min.iloc[-2] > ema50_5min.iloc[-2]) and (
-        ema9_5min.iloc[-1] < ema50_5min.iloc[-1]
+    if (
+        (ema9_5min.iloc[-2] > ema50_5min.iloc[-2])
+        and (ema9_5min.iloc[-1] < ema50_5min.iloc[-1])
+        and rsi_5min > 50
     ):
         strategy = "sell"
         return strategy
