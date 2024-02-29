@@ -14,9 +14,9 @@ class TradingBot:
     api_secret="C5lVp013avzhEZgojyYxiT4TzwnZOX70gu8n",
 )
     LEVERAGE = 15
-    MODE= 0  # 1 - Isolated, 0 - Cross
+    MODE= 1  # 1 - Isolated, 0 - Cross
     TIMEFRAME = 15
-    CANDLESIZE = 750
+    CANDLESIZE = 100
     AMOUNT = 100
     EXPECTED_PROFIT =20
     TAKE_PROFIT_MULTIPLIER = 3
@@ -124,11 +124,11 @@ class TradingBot:
             print(symbols)
 
             for symbol in symbols:
-                df_5min = self.get_klines(symbol=symbol,timeframe=5)
+                df_5min = self.get_klines(symbol=symbol,timeframe=15)
                 if df_5min is None:
                     print(f"No dataframe available for {symbol}.")
                     continue
-                df_15min = self.get_klines(symbol=symbol,timeframe=15)
+                df_15min = self.get_klines(symbol=symbol,timeframe=30)
                 if df_5min is None:
                     print(f"No dataframe available for {symbol}.")
                     continue
@@ -141,10 +141,13 @@ class TradingBot:
                     print(f"No strategy found for {symbol}.")
                     continue
                 elif strategy == "buy":
-                    set_mode(client=self.client,symbol=symbol,leverage=self.LEVERAGE,mode=self.MODE)
+                    sleep(1)
+                    set_mode(client=self.client,symbol=symbol,leverage=str(self.LEVERAGE),mode=self.MODE)
+                    sleep(1)
+                    
                     self.place_order_market(side='buy',symbol=symbol)
                 else:
-                    set_mode(client=self.client,symbol=symbol,leverage=self.LEVERAGE,mode=self.MODE)
+                    set_mode(client=self.client,symbol=symbol,leverage=str(self.LEVERAGE),mode=self.MODE)
                     self.place_order_market(side='sell',symbol=symbol)
         except Exception as err:
             print("Error in signal processing:", err)

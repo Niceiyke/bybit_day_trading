@@ -27,10 +27,9 @@ def get_pnl(client):
 # Changing mode and leverage:
 def set_mode(client, symbol, mode, leverage):
     try:
-        resp = client.switch_margin_mode(
+        resp = client.set_leverage(
             category="linear",
             symbol=symbol,
-            tradeMode=mode,
             buyLeverage=leverage,
             sellLeverage=leverage,
         )
