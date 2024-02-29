@@ -23,8 +23,8 @@ class TradingBot:
     STOP_LOSS_MULTIPLIER = 2
     MARKET_SLEEP_TIME = 2
     MIN_SYMBOL_TURNOVER = 5000000
-    MIN_SYMBOL_24H_PCNT=0
-    MAX_OPEN_POSITION =10
+    MIN_SYMBOL_24H_PCNT = 0
+    MAX_OPEN_POSITION = 10
 
     def get_symbols(self):
         try:
@@ -35,7 +35,7 @@ class TradingBot:
                 if "USDT" in elem["symbol"]
                 and "USDC" not in elem["symbol"]
                 and float(elem["turnover24h"]) > self.MIN_SYMBOL_TURNOVER
-                and float(elem['price24hPcnt'])>self.MIN_SYMBOL_24H_PCNT
+                and float(elem["price24hPcnt"]) > self.MIN_SYMBOL_24H_PCNT
             ]
             print(f"You have total of {len(symbols)} crypto to trade")
             return symbols
@@ -59,19 +59,24 @@ class TradingBot:
         except Exception as err:
             print(f"Error fetching klines for {symbol}:", err)
 
-    def place_order_market(self, symbol, side,):
+    def place_order_market(
+        self,
+        symbol,
+        side,
+    ):
         try:
-            open_position =get_positions(client=self.client)
+            open_position = get_positions(client=self.client)
 
-
-            if len(open_position)==5:
+            if len(open_position) == 5:
                 return
-            
+
             if symbol in open_position:
                 return
-            
-            print("open position are",open_position)
-            price_precision, quantity_precision = get_precisions(client=self.client,symbol=symbol)
+
+            print("open position are", open_position)
+            price_precision, quantity_precision = get_precisions(
+                client=self.client, symbol=symbol
+            )
             sleep(self.MARKET_SLEEP_TIME)
 
             mark_price = float(
@@ -87,9 +92,13 @@ class TradingBot:
 
             sleep(self.MARKET_SLEEP_TIME)
 
-            tp,sl=get_tp_spl(expected_profit=self.EXPECTED_PROFIT ,amount=amount,price=mark_price,side=side,precision=price_precision)
-
-
+            tp, sl = get_tp_spl(
+                expected_profit=self.EXPECTED_PROFIT,
+                amount=amount,
+                price=mark_price,
+                side=side,
+                precision=price_precision,
+            )
 
             resp = self.client.place_order(
                 category="linear",
@@ -140,7 +149,7 @@ class TradingBot:
         except Exception as err:
             print("Error in signal processing:", err)
 
-    def place_dummy_order(self, side,symbol):
+    def place_dummy_order(self, side, symbol):
         if side == "buy":
             print(f"long order placed {symbol}")
 
