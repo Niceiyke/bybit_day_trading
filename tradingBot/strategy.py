@@ -27,10 +27,10 @@ def three_moving_average_rsi_strategy(df):
     ema9, ema14, ema21, ema26, ema50, ema200, last_price = calculate_ema(df=df)
     rsi = momentum.rsi(close=df["Close"], window=14).iloc[-1]
 
-    if (last_price > ema21) and (ema21 > ema50) and (ema50 > ema200) and (rsi < 50):
+    if (last_price > ema21) and (ema21 > ema50) and (ema50 > ema200) and (rsi > 50):
         return "buy"
 
-    elif (last_price < ema21) and (ema21 < ema50) and (ema50 < ema200) and (rsi > 50):
+    elif (last_price < ema21) and (ema21 < ema50) and (ema50 < ema200) and (rsi < 50):
         return "sell"
     else:
         return "hold"
