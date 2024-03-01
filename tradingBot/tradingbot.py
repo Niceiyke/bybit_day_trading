@@ -134,8 +134,8 @@ class TradingBot:
                     continue
 
                 #strategy = get_strategy(df=df)
-                #strategy = three_moving_average_rsi_strategy(df=df)
-                strategy =trend_strategy(df5=df_5min,df15=df_15min)
+                strategy = three_moving_average_rsi_strategy(df=df_15min)
+                #strategy =trend_strategy(df5=df_5min,df15=df_15min)
                 
                 if strategy == "hold":
                     print(f"No strategy found for {symbol}.")
