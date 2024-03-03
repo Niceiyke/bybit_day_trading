@@ -27,7 +27,7 @@ def get_strategy(df):
     macd = macd.iloc[-1]
     signal = signal.iloc[-1]
     rsi = rsi.iloc[-1]
-    short_term_ema = short_term_ema[-1]
+    short_term_ema = short_term_ema
     mid_term_ema = mid_term_ema
     long_term_ema = long_term_ema
 
