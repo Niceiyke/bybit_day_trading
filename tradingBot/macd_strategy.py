@@ -32,6 +32,7 @@ def get_strategy(df):
     long_term_ema = long_term_ema
 
     print("macd:", macd, "signal:", signal, "rsi:", rsi)
+    print("short:", short_term_ema, "mid:", mid_term_ema, "long:", long_term_ema)
 
     # Check bullish signal long
     if (
