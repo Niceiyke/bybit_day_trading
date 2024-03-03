@@ -141,7 +141,7 @@ class TradingBot:
                 if strategy == "hold":
                     print(f"No strategy found for {symbol}.")
                     continue
-                elif strategy == "buy":
+                if strategy == "buy":
                     sleep(1)
                     set_mode(
                         client=self.client,
@@ -152,7 +152,7 @@ class TradingBot:
                     sleep(1)
 
                     self.place_order_market(side="buy", symbol=symbol)
-                else:
+                if strategy == "sell":
                     set_mode(
                         client=self.client,
                         symbol=symbol,

@@ -22,7 +22,7 @@ def calculate_macd(df):
 
 
 def get_strategy(df):
-    strategy = "none"
+    strategy = "hold"
     macd, signal, rsi, short_term_ema, mid_term_ema, long_term_ema = calculate_macd(df)
     macd = macd.iloc[-1]
     signal = signal.iloc[-1]
@@ -37,13 +37,10 @@ def get_strategy(df):
     # Check bullish signal long
     if short_term_ema > mid_term_ema:
         print("buy 1")
-
         if mid_term_ema > long_term_ema:
             print("buy 2")
-
             if macd > signal:
                 print("buy 3")
-
                 if rsi < 60:
                     print("buy 4")
                     strategy = "buy"
