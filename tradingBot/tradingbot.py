@@ -124,7 +124,7 @@ class TradingBot:
             print(symbols)
 
             for symbol in symbols:
-                df_5min = self.get_klines(symbol=symbol, timeframe=15)
+                df_5min = self.get_klines(symbol=symbol, timeframe=5)
                 if df_5min is None:
                     print(f"No dataframe available for {symbol}.")
                     continue
