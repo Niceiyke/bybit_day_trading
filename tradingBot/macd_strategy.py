@@ -35,25 +35,23 @@ def get_strategy(df):
     print("short:", short_term_ema, "mid:", mid_term_ema, "long:", long_term_ema)
 
     # Check bullish signal long
-    if (
-        (short_term_ema > mid_term_ema)
-        and (mid_term_ema > long_term_ema)
-        and (macd > signal)
-        and (rsi < 60)
-    ):
-        strategy = "buy"
-        return strategy
+    if short_term_ema > mid_term_ema:
+
+        if mid_term_ema > long_term_ema:
+
+            if macd > signal:
+
+                if rsi < 60:
+                    strategy = "buy"
+                    return strategy
 
     # Check bearish signal short
-    if (
-        (short_term_ema < mid_term_ema)
-        and (mid_term_ema < long_term_ema)
-        and (signal > macd)
-        and (rsi < 50)
-    ):
-
-        strategy = "sell"
-        return strategy
+    if short_term_ema < mid_term_ema:
+        if mid_term_ema < long_term_ema:
+            if signal > macd:
+                if rsi < 50:
+                    strategy = "sell"
+                    return strategy
 
     # Default case
     return strategy
