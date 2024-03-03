@@ -1,37 +1,30 @@
 from helper import get_price_difference
+from ta import momentum
+
 
 def calculate_macd(df):
     close_df = df["Close"]
-    ma9 = close_df.ewm(span=12, adjust=False).mean()
-    ma26 = close_df.ewm(span=26, adjust=False).mean()
+    ema20 = close_df.ewm(span=20, adjust=False).mean()
+    ema50 = close_df.ewm(span=50, adjust=False).mean()
     ema200 = close_df.ewm(span=200, adjust=False).mean()
-    macd = ma9 - ma26
+    macd = ema20 - ema50
     signal = macd.ewm(span=9, adjust=False).mean()
-    return macd.iloc[-1], signal.iloc[-1], ema200.iloc[-1], close_df.iloc[-1]
+    rsi = momentum.RSIIndicator(close_df).rsi()
+    return ema20, ema50, ema200, macd, signal, rsi
 
 
 def get_strategy(df):
     strategy = "none"
-    macd, signal, moving_average, price = calculate_macd(df)
+    ema20, ema50, ema200, macd, signal, rsi = calculate_macd(df)
 
     # Check bullish signal long
-    if macd>signal and macd < 0 and signal < 0 and  moving_average > price :
-
-        pct_diff= get_price_difference(side='buy',current_price=price,moving_average_price=moving_average)
-
-        if pct_diff > 5:
-            return    
+    if (macd > signal) and (macd < 0) and (signal < 0) and (rsi < 60):
         strategy = "buy"
         return strategy
 
     # Check bearish signal short
-    if signal>macd and macd > 0 and signal > 0 and moving_average < price:
+    if (signal > macd) and (macd < 0) and (signal < 0) and (rsi < 50):
 
-        pct_diff= get_price_difference(side='sell',current_price=price,moving_average_price=moving_average)
-
-        if pct_diff < 5:
-            return  
-        
         strategy = "sell"
         return strategy
 
