@@ -2,20 +2,18 @@ from helper import get_price_difference
 from ta import momentum
 
 
-def calculate_macd(df):
-    close_df = df["Close"]
-    ema20 = close_df.ewm(span=20, adjust=False).mean()
-    ema50 = close_df.ewm(span=50, adjust=False).mean()
-    ema200 = close_df.ewm(span=200, adjust=False).mean()
-    macd = ema20 - ema50
-    signal = macd.ewm(span=9, adjust=False).mean()
-    rsi = momentum.RSIIndicator(close_df).rsi()
-    return ema20, ema50, ema200, macd, signal, rsi
+def calculate_macd(close_prices):
+    ema_12 = close_prices.ewm(span=12, adjust=False).mean()
+    ema_26 = close_prices.ewm(span=26, adjust=False).mean()
+    macd_line = ema_12 - ema_26
+    signal_line = macd_line.ewm(span=9, adjust=False).mean()
+    rsi = momentum.RSIIndicator(close_prices).rsi()
+    return macd_line, signal_line, rsi
 
 
 def get_strategy(df):
     strategy = "none"
-    ema20, ema50, ema200, macd, signal, rsi = calculate_macd(df)
+    macd, signal, rsi = calculate_macd(df)
     macd = macd.iloc[-1]
     signal = signal.iloc[-1]
     rsi = rsi.iloc[-1]
