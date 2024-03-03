@@ -22,12 +22,12 @@ def get_strategy(df):
     print("macd:", macd, "signal:", signal, "rsi:", rsi)
 
     # Check bullish signal long
-    if (macd > signal) and (macd < 0) and (signal < 0) and (rsi < 60):
+    if (macd > signal) and (rsi < 60):
         strategy = "buy"
         return strategy
 
     # Check bearish signal short
-    if (signal > macd) and (macd < 0) and (signal < 0) and (rsi < 50):
+    if (signal > macd) and (rsi < 50):
 
         strategy = "sell"
         return strategy
