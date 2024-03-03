@@ -80,27 +80,3 @@ def trend_strategy(df5, df15):
 
     else:
         return "hold"
-
-    signals = pd.DataFrame(index=df.index)
-    signals["Price"] = df
-    signals["Signal"] = "hold"
-
-    # Long Entry (Buy Signal) with confirmation
-    signals["Signal"][
-        (ema9_15min.shift(1) < ema50_15min.shift(1))
-        & (ema9_15min > ema50_15min)
-        & (ema50_30min.shift(1) < ema100_30min.shift(1))
-        & (ema50_30min > ema100_30min)
-        & (macd > 0)
-        & (rsi > 30)
-    ] = "buy"
-
-    # Short Entry (Sell Signal) with confirmation
-    signals["Signal"][
-        (ema9_15min.shift(1) > ema50_15min.shift(1))
-        & (ema9_15min < ema50_15min)
-        & (ema50_30min.shift(1) > ema100_30min.shift(1))
-        & (ema50_30min < ema100_30min)
-        & (macd < 0)
-        & (rsi < 70)
-    ] = "sell"
