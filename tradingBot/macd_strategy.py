@@ -7,7 +7,7 @@ def calculate_macd(df):
     ema_12 = close_prices.ewm(span=12, adjust=False).mean()
     ema_26 = close_prices.ewm(span=26, adjust=False).mean()
     ema_50 = close_prices.ewm(span=50, adjust=False).mean()
-    ema_200 = close_prices.ewm(span=50, adjust=False).mean()
+    ema_200 = close_prices.ewm(span=200, adjust=False).mean()
     macd_line = ema_12 - ema_26
     signal_line = macd_line.ewm(span=9, adjust=False).mean()
     rsi = momentum.RSIIndicator(close_prices).rsi()
