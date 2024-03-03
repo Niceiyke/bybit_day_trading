@@ -16,6 +16,9 @@ def calculate_macd(df):
 def get_strategy(df):
     strategy = "none"
     ema20, ema50, ema200, macd, signal, rsi = calculate_macd(df)
+    macd = macd.iloc[-1]
+    signal = signal.iloc[-1]
+    rsi = rsi.iloc[-1]
 
     print("macd:", macd, "signal:", signal, "rsi:", rsi)
 
