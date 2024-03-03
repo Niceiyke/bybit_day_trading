@@ -2,7 +2,8 @@ from helper import get_price_difference
 from ta import momentum
 
 
-def calculate_macd(close_prices):
+def calculate_macd(df):
+    close_prices = df["Close"]
     ema_12 = close_prices.ewm(span=12, adjust=False).mean()
     ema_26 = close_prices.ewm(span=26, adjust=False).mean()
     macd_line = ema_12 - ema_26
