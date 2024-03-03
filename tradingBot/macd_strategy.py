@@ -17,6 +17,8 @@ def get_strategy(df):
     strategy = "none"
     ema20, ema50, ema200, macd, signal, rsi = calculate_macd(df)
 
+    print(macd, signal, rsi)
+
     # Check bullish signal long
     if (macd > signal) and (macd < 0) and (signal < 0) and (rsi < 60):
         strategy = "buy"
