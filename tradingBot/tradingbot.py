@@ -163,13 +163,6 @@ class TradingBot:
         except Exception as err:
             print("Error in signal processing:", err)
 
-    def place_dummy_order(self, side, symbol):
-        if side == "buy":
-            print(f"long order placed {symbol}")
-
-        else:
-            print(f"short order placed {symbol}")
-
 
 if __name__ == "__main__":
     obj = TradingBot()

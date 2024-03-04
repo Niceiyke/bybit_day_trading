@@ -36,6 +36,7 @@ def get_strategy(df):
         short_term_ema > mid_term_ema
         and mid_term_ema > long_term_ema
         and macd > signal
+        and macd < 0
         and rsi < 60
     ):
         strategy = "buy"
@@ -46,6 +47,7 @@ def get_strategy(df):
         short_term_ema < mid_term_ema
         and mid_term_ema < long_term_ema
         and signal > macd
+         and macd > 0
         and rsi < 50
     ):
         strategy = "sell"
