@@ -59,33 +59,34 @@ def get_precisions(client, symbol):
     except Exception as err:
         print(err)
 
-# pct_diff   
-def get_price_difference(side,current_price, moving_average_price):
 
-    if side =='buy':
-        price_diff =(moving_average_price-current_price)/current_price
-        return round(price_diff*100,2)
-    
+# pct_diff
+def get_price_difference(side, current_price, moving_average_price):
+
+    if side == "buy":
+        price_diff = (moving_average_price - current_price) / current_price
+        return round(price_diff * 100, 2)
+
     else:
-        price_diff =(current_price-moving_average_price)/moving_average_price
-        return round(price_diff*100,2)
+        price_diff = (current_price - moving_average_price) / moving_average_price
+        return round(price_diff * 100, 2)
 
-def get_tp_spl(expected_profit,amount,price,side,precision):
-   
-    expected_loss =expected_profit
 
-    perct_increae= (expected_profit/amount)
-    perct_decreae= (expected_loss/amount)
+def get_tp_spl(expected_profit, amount, price, side, precision):
 
-    ltp =round(price*(1+perct_increae),precision)
-    lsl =round(price*(1-perct_decreae),precision)
+    expected_loss = expected_profit / 3
 
-    stp =round(price*(1-perct_increae),precision)
-    ssl =round(price*(1+perct_decreae),precision)
+    perct_increae = expected_profit / amount
+    perct_decreae = expected_loss / amount
 
-    if side =='buy':
-      return (ltp,lsl)
-    
+    ltp = round(price * (1 + perct_increae), precision)
+    lsl = round(price * (1 - perct_decreae), precision)
+
+    stp = round(price * (1 - perct_increae), precision)
+    ssl = round(price * (1 + perct_decreae), precision)
+
+    if side == "buy":
+        return (ltp, lsl)
+
     else:
-       return(stp,ssl)
-
+        return (stp, ssl)
