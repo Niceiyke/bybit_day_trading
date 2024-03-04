@@ -129,11 +129,6 @@ class TradingBot:
                     print(f"No dataframe available for {symbol}.")
                     continue
 
-                    # df_15min = self.get_klines(symbol=symbol, timeframe=30)
-                    # if df_5min is None:
-                    print(f"No dataframe available for {symbol}.")
-                    continue
-
                 strategy = get_strategy(df=df_5min)
                 # strategy = three_moving_average_rsi_strategy(df=df_15min)
                 # strategy =trend_strategy(df5=df_5min,df15=df_15min)

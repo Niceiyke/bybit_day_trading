@@ -88,3 +88,4 @@ def get_tp_spl(expected_profit,amount,price,side,precision):
     
     else:
        return(stp,ssl)
+

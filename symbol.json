@@ -1,24 +1,20 @@
-{'symbol': 'ETHUSDT', 'lastPrice': '2927.17', 'indexPrice': '2926.93',
- 'markPrice': '2927.16', 'prevPrice24h': '2980.95', 'price24hPcnt': '-0.018041', 
- 'highPrice24h': '3043.00', 'lowPrice24h': '2912.44', 'prevPrice1h': '2943.03', 
- 'openInterest': '529365.09', 
- 'openInterestValue': '1549536316.84', 'turnover24h': '2766206162.9678', 
- 'volume24h': '932378.5300', 'fundingRate': '0.0001', 
- 'nextFundingTime': '1708704000000', 'predictedDeliveryPrice': '', 
- 'basisRate': '', 'deliveryFeeRate': '', 'deliveryTime': '0',
-  'ask1Size': '0.10', 'bid1Price': '2927.17', 'ask1Price': '2927.18',
-   'bid1Size': '1.52', 'basis': ''}
+{'symbol': 'BNBUSDT', 'leverage': '15', 'autoAddMargin': 0, 'avgPrice': '420', 'liqPrice': '',
+ 'riskLimitValue': '200000', 'takeProfit': '424.5', 'positionValue': '1503.6', 'isReduceOnly': False,
+  'tpslMode': 'Full', 'riskId': 251, 'trailingStop': '0', 'unrealisedPnl': '-2.8998',
+   'markPrice': '419.19', 'adlRankIndicator': 2, 'cumRealisedPnl': '1.1450692',
+    'positionMM': '30.84385803', 'createdTime': '1709112293188', 'positionIdx': 0,
+     'positionIM': '101.01186304', 'seq': 28068343346, 'updatedTime': '1709565739021',
+      'side': 'Buy', 'bustPrice': '', 'positionBalance': '0', 'leverageSysUpdatedTime': '',
+       'curRealisedPnl': '-0.82698', 'size': '3.58',
+ 'positionStatus': 'Normal', 'mmrSysUpdatedTime': '',
+  'stopLoss': '413.5', 'tradeMode': 0, 'sessionAvgPrice': ''}
 
-
-   {'symbol': 'FETUSDT', 'lastPrice': '1.11555', 'indexPrice': '1.11497', 
-   'markPrice': '1.11541', 'prevPrice24h': '1.20000',
-    'price24hPcnt': '-0.070375',
-    'highPrice24h': '1.23990',
-    'lowPrice24h': '1.07060', 'prevPrice1h': '1.19960', 'openInterest': '22587011', 
-    'openInterestValue': '25193777.94',
-     'turnover24h': '135,296,817.8768', 
-     'volume24h': '118152756.0000',
-      'fundingRate': '0.00014594', 'nextFundingTime': '1708704000000',
-       'predictedDeliveryPrice': '', 'basisRate': '', 'deliveryFeeRate': '', 
-   'deliveryTime': '0', 'ask1Size': '95', 'bid1Price': '1.11555', 'ask1Price':
-    '1.11585', 'bid1Size': '230', 'basis': ''}
+  {'symbol': 'BNBUSDT', 'leverage': '15', 'autoAddMargin': 0, 'avgPrice': '420', 'liqPrice': '', 
+  'riskLimitValue': '200000', 'takeProfit': '424.5', 'positionValue': '1503.6', 'isReduceOnly': False, 
+  'tpslMode': 'Full', 'riskId': 251, 'trailingStop': '0', 'unrealisedPnl': '-3.58', 'markPrice': '419', 
+  'adlRankIndicator': 2, 'cumRealisedPnl': '0.99499202', 'positionMM': '30.84385803', 
+  'createdTime': '1709112293188', 'positionIdx': 0, 'positionIM': '101.01186304', 'seq': 28068384096, 
+  'updatedTime': '1709568000033', 'side': 'Buy', 'bustPrice': '', 'positionBalance': '0', 
+  'leverageSysUpdatedTime': '', '
+  curRealisedPnl': '-0.97705718', 'size': '3.58', 'positionStatus': 'Normal', 'mmrSysUpdatedTime': '', 
+  'stopLoss': '413.5', 'tradeMode': 0, 'sessionAvgPrice': ''}
