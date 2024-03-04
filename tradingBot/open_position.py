@@ -1,4 +1,5 @@
 from pybit.unified_trading import HTTP
+from time import sleep
 
 
 client = HTTP(
@@ -64,4 +65,6 @@ def close_position():
                     close_on_trigger=False)
         
 if __name__ =="__main__":
-    close_position()
+    while True:
+        close_position()
+        sleep(2)
