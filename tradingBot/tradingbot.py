@@ -1,30 +1,29 @@
-import os
-from pybit.unified_trading import HTTP
 import pandas as pd
-from macd_strategy import get_strategy
-from helper import set_mode, get_pnl, get_positions, get_precisions, get_tp_spl
-from strategy import three_moving_average_rsi_strategy, trend_strategy
+from pybit.unified_trading import HTTP
 from time import sleep
+from helper import get_positions, get_precisions, get_tp_spl,set_mode
+from strategy import get_strategy
 
 
 class TradingBot:
-    client = HTTP(
-        testnet=True,
-        api_key="vHnoV1kQTgYsmhaY2s",
-        api_secret="C5lVp013avzhEZgojyYxiT4TzwnZOX70gu8n",
-    )
-    LEVERAGE = 15
-    MODE = 1  # 1 - Isolated, 0 - Cross
-    TIMEFRAME = 15
-    CANDLESIZE = 100
-    AMOUNT = 100
-    EXPECTED_PROFIT = 20
-    TAKE_PROFIT_MULTIPLIER = 3
-    STOP_LOSS_MULTIPLIER = 2
-    MARKET_SLEEP_TIME = 2
-    MIN_SYMBOL_TURNOVER = 5000000
-    MIN_SYMBOL_24H_PCNT = 0
-    MAX_OPEN_POSITION = 10
+    def __init__(self):
+        self.client = HTTP(
+            testnet=True,
+            api_key="vHnoV1kQTgYsmhaY2s",
+            api_secret="C5lVp013avzhEZgojyYxiT4TzwnZOX70gu8n",
+        )
+        self.LEVERAGE = 15
+        self.MODE = 1  # 1 - Isolated, 0 - Cross
+        self.TIMEFRAME = 15
+        self.CANDLESIZE = 100
+        self.AMOUNT = 100
+        self.EXPECTED_PROFIT = 20
+        self.TAKE_PROFIT_MULTIPLIER = 3
+        self.STOP_LOSS_MULTIPLIER = 2
+        self.MARKET_SLEEP_TIME = 2
+        self.MIN_SYMBOL_TURNOVER = 5000000
+        self.MIN_SYMBOL_24H_PCNT = 0
+        self.MAX_OPEN_POSITION = 10
 
     def get_symbols(self):
         try:
@@ -37,7 +36,7 @@ class TradingBot:
                 and float(elem["turnover24h"]) > self.MIN_SYMBOL_TURNOVER
                 and float(elem["price24hPcnt"]) > self.MIN_SYMBOL_24H_PCNT
             ]
-            print(f"You have total of {len(symbols)} crypto to trade")
+            print(f"You have a total of {len(symbols)} crypto to trade")
             return symbols
         except Exception as err:
             print("Error fetching symbols:", err)
@@ -59,21 +58,16 @@ class TradingBot:
         except Exception as err:
             print(f"Error fetching klines for {symbol}:", err)
 
-    def place_order_market(
-        self,
-        symbol,
-        side,
-    ):
+    def place_order_market(self, symbol, side):
         try:
-            open_position = get_positions(client=self.client)
-
-            if len(open_position) == 5:
+            open_positions = get_positions(client=self.client)
+            if len(open_positions) >= self.MAX_OPEN_POSITION:
                 return
 
-            if symbol in open_position:
+            if symbol in open_positions:
                 return
 
-            print("open position are", open_position)
+            print("Open positions are", open_positions)
             price_precision, quantity_precision = get_precisions(
                 client=self.client, symbol=symbol
             )
@@ -130,9 +124,6 @@ class TradingBot:
                     continue
 
                 strategy = get_strategy(df=df_5min)
-                # strategy = three_moving_average_rsi_strategy(df=df_15min)
-                # strategy =trend_strategy(df5=df_5min,df15=df_15min)
-
                 if strategy == "hold":
                     print(f"No strategy found for {symbol}.")
                     continue
@@ -162,6 +153,5 @@ class TradingBot:
 if __name__ == "__main__":
     obj = TradingBot()
     while True:
-
         obj.get_signal()
         sleep(60)

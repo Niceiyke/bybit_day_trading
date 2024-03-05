@@ -1,82 +1,56 @@
 from ta import momentum
-from ta import trend
-import pandas as pd
 
 
-def calculate_ema(df):
-    close_df = df["Close"]
-    ema9 = close_df.ewm(span=9, adjust=False).mean()
-    ema14 = close_df.ewm(span=14, adjust=False).mean()
-    ema21 = close_df.ewm(span=21, adjust=False).mean()
-    ema26 = close_df.ewm(span=26, adjust=False).mean()
-    ema50 = close_df.ewm(span=50, adjust=False).mean()
-    ema200 = close_df.ewm(span=200, adjust=False).mean()
-
+def calculate_macd(df):
+    close_prices = df["Close"]
+    ema_12 = close_prices.ewm(span=12, adjust=False).mean()
+    ema_26 = close_prices.ewm(span=26, adjust=False).mean()
+    ema_50 = close_prices.ewm(span=50, adjust=False).mean()
+    ema_200 = close_prices.ewm(span=200, adjust=False).mean()
+    macd_line = ema_12 - ema_26
+    signal_line = macd_line.ewm(span=9, adjust=False).mean()
+    rsi = momentum.RSIIndicator(close_prices).rsi()
     return (
-        ema9.iloc[-1],
-        ema14.iloc[-1],
-        ema21.iloc[-1],
-        ema26.iloc[-1],
-        ema50.iloc[-1],
-        ema200.iloc[-1],
-        close_df.iloc[-1],
+        macd_line,
+        signal_line,
+        rsi,
+        ema_12.iloc[-1],
+        ema_50.iloc[-1],
+        ema_200.iloc[-1],
     )
 
 
-def three_moving_average_rsi_strategy(df):
-    ema9, ema14, ema21, ema26, ema50, ema200, last_price = calculate_ema(df=df)
-    rsi = momentum.rsi(close=df["Close"], window=14).iloc[-1]
-
-    if (last_price > ema21) and (ema21 > ema50) and (ema50 > ema200) and (rsi > 50):
-        return "buy"
-
-    elif (last_price < ema21) and (ema21 < ema50) and (ema50 < ema200) and (rsi < 50):
-        return "sell"
-    else:
-        return "hold"
-
-
-# Function to generate trading signals based on refined strategy
-def trend_strategy(df5, df15):
+def get_strategy(df):
     strategy = "hold"
-    df5 = df5["Close"]
-    df15 = df15["Close"]
-    # Calculate EMAs for both timeframes
-    ema9_5min = df5.ewm(span=26).mean()
-    ema50_5min = df5.ewm(span=50).mean()
-    ema100_5min = df5.ewm(span=100).mean()
-    ema200_5min = df5.ewm(span=200).mean()
+    macd, signal, rsi, short_term_ema, mid_term_ema, long_term_ema = calculate_macd(df)
+    macd = macd.iloc[-1]
+    signal = signal.iloc[-1]
+    rsi = rsi.iloc[-1]
+    short_term_ema = short_term_ema
+    mid_term_ema = mid_term_ema
+    long_term_ema = long_term_ema
 
-    ema9_15min = df15.ewm(span=26).mean()
-    ema50_15min = df15.ewm(span=50).mean()
-    ema100_15min = df15.ewm(span=100).mean()
-    ema200_15min = df15.ewm(span=200).mean()
-
-    # Calculate MACD for confirmation
-    macd_5min = trend.MACD(close=df5).macd()
-    macd_15min = trend.MACD(close=df15).macd()
-
-    # Calculate RSI for confirmation
-    rsi_5min = momentum.RSIIndicator(df5).rsi()
-    rsi_15min = momentum.RSIIndicator(df15).rsi()
-
-    # Long Entry (Buy Signal) with confirmation
-
+    # Check bullish signal long
     if (
-        (ema9_5min.iloc[-2] < ema50_5min.iloc[-2])
-        and (ema9_5min.iloc[-1] > ema50_5min.iloc[-1])
-        and rsi_5min < 50
+        short_term_ema > mid_term_ema
+        and mid_term_ema > long_term_ema
+        and macd > signal
+        and macd < 0
+        and rsi < 60
     ):
         strategy = "buy"
         return strategy
 
+    # Check bearish signal short
     if (
-        (ema9_5min.iloc[-2] > ema50_5min.iloc[-2])
-        and (ema9_5min.iloc[-1] < ema50_5min.iloc[-1])
-        and rsi_5min > 50
+        short_term_ema < mid_term_ema
+        and mid_term_ema < long_term_ema
+        and signal > macd
+        and macd > 0
+        and rsi < 50
     ):
         strategy = "sell"
         return strategy
 
-    else:
-        return "hold"
+    # Default case
+    return strategy
