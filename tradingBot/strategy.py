@@ -21,6 +21,7 @@ def calculate_macd(df):
 
 
 def get_strategy(df):
+    factor =1.2
     strategy = "hold"
     macd, signal, rsi, short_term_ema, mid_term_ema, long_term_ema = calculate_macd(df)
     macd = macd.iloc[-1]
@@ -35,6 +36,7 @@ def get_strategy(df):
         short_term_ema > mid_term_ema
         and mid_term_ema > long_term_ema
         and macd > signal
+        and macd < (signal*factor)
         and rsi > 50
     ):
         strategy = "buy"
@@ -45,6 +47,7 @@ def get_strategy(df):
         short_term_ema < mid_term_ema
         and mid_term_ema < long_term_ema
         and signal > macd
+        and signal < (macd*factor)
         and rsi < 50
     ):
         strategy = "sell"
