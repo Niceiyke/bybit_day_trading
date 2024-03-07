@@ -14,7 +14,7 @@ class TradingBot:
         )
         self.LEVERAGE = 15
         self.MODE = 1  # 1 - Isolated, 0 - Cross
-        self.TIMEFRAME = 5
+        self.TIMEFRAME = 15
         self.CANDLESIZE = 100
         self.AMOUNT = 100
         self.EXPECTED_PROFIT = 10
