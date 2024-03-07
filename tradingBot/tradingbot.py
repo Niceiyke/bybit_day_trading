@@ -14,14 +14,14 @@ class TradingBot:
         )
         self.LEVERAGE = 15
         self.MODE = 1  # 1 - Isolated, 0 - Cross
-        self.TIMEFRAME = 1
+        self.TIMEFRAME = 5
         self.CANDLESIZE = 100
         self.AMOUNT = 100
         self.EXPECTED_PROFIT = 10
         self.TAKE_PROFIT_MULTIPLIER = 3
         self.STOP_LOSS_MULTIPLIER = 2
         self.MARKET_SLEEP_TIME = 2
-        self.MIN_SYMBOL_TURNOVER = 5000000
+        self.MIN_SYMBOL_TURNOVER = 20000000
         self.MIN_SYMBOL_24H_PCNT = 0
         self.MAX_OPEN_POSITION = 10
 
