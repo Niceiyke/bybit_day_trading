@@ -74,7 +74,7 @@ def get_price_difference(side, current_price, moving_average_price):
 
 def get_tp_spl(expected_profit, amount, price, side, precision):
 
-    expected_loss = expected_profit/3
+    expected_loss = 5
 
     perct_increae = expected_profit / amount
     perct_decreae = expected_loss / amount
