@@ -17,7 +17,7 @@ class TradingBot:
         self.TIMEFRAME = 15
         self.CANDLESIZE = 100
         self.AMOUNT = 100
-        self.EXPECTED_PROFIT = 10
+        self.EXPECTED_PROFIT = 20
         self.TAKE_PROFIT_MULTIPLIER = 3
         self.STOP_LOSS_MULTIPLIER = 2
         self.MARKET_SLEEP_TIME = 2
