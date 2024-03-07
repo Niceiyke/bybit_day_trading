@@ -14,7 +14,7 @@ class TradingBot:
         )
         self.LEVERAGE = 15
         self.MODE = 1  # 1 - Isolated, 0 - Cross
-        self.TIMEFRAME = 15
+        self.TIMEFRAME = 1
         self.CANDLESIZE = 100
         self.AMOUNT = 100
         self.EXPECTED_PROFIT = 20
@@ -118,7 +118,7 @@ class TradingBot:
             print(symbols)
 
             for symbol in symbols:
-                df_5min = self.get_klines(symbol=symbol, timeframe=15)
+                df_5min = self.get_klines(symbol=symbol, timeframe=self.TIMEFRAME)
                 if df_5min is None:
                     print(f"No dataframe available for {symbol}.")
                     continue

@@ -34,7 +34,6 @@ def get_strategy(df):
     # Check bullish signal long
     if (
         short_term_ema > mid_term_ema
-        and mid_term_ema > long_term_ema
         and macd > signal
         and macd < (signal*factor)
         and rsi > 50
@@ -45,7 +44,6 @@ def get_strategy(df):
     # Check bearish signal short
     if (
         short_term_ema < mid_term_ema
-        and mid_term_ema < long_term_ema
         and signal > macd
         and signal < (macd*factor)
         and rsi < 50
